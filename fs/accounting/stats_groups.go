@@ -88,6 +88,7 @@ If group is not provided then summed up stats for all groups will be
 returned.
 
 Parameters
+
 - group - name of the stats group (string)
 
 Returns the following values:
@@ -140,6 +141,7 @@ returned.
 Note only the last 100 completed transfers are returned.
 
 Parameters
+
 - group - name of the stats group (string)
 
 Returns the following values:
@@ -192,8 +194,8 @@ This clears counters and errors for all stats or specific stats group if group
 is provided.
 
 Parameters
+
 - group - name of the stats group (string)
-` + "```" + `
 `,
 	})
 }
@@ -243,6 +245,7 @@ func GlobalStats() *StatsInfo {
 // NewStatsGroup creates new stats under named group.
 func NewStatsGroup(group string) *StatsInfo {
 	stats := NewStats()
+	stats.group = group
 	groups.set(group, stats)
 	return stats
 }

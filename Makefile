@@ -46,7 +46,8 @@ endif
 rclone:
 	go build -v --ldflags "-s -X github.com/rclone/rclone/fs.Version=$(TAG)" $(BUILDTAGS)
 	mkdir -p `go env GOPATH`/bin/
-	cp -av rclone`go env GOEXE` `go env GOPATH`/bin/
+	cp -av rclone`go env GOEXE` `go env GOPATH`/bin/rclone`go env GOEXE`.new
+	mv -v `go env GOPATH`/bin/rclone`go env GOEXE`.new `go env GOPATH`/bin/rclone`go env GOEXE`
 
 test_all:
 	go install --ldflags "-s -X github.com/rclone/rclone/fs.Version=$(TAG)" $(BUILDTAGS) github.com/rclone/rclone/fstest/test_all
@@ -93,6 +94,11 @@ release_dep:
 # Update dependencies
 update:
 	GO111MODULE=on go get -u ./...
+	GO111MODULE=on go mod tidy
+	GO111MODULE=on go mod vendor
+
+# Tidy the module dependencies
+tidy:
 	GO111MODULE=on go mod tidy
 	GO111MODULE=on go mod vendor
 

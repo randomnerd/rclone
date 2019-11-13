@@ -15,6 +15,7 @@ This file describes how to make the various kinds of releases
   * make test # see integration test server or run locally
   * make tag
   * edit docs/content/changelog.md
+  * make tidy
   * make doc
   * git status - to check for new man pages - git add them
   * git commit -a -v -m "Version v1.XX.0"
@@ -88,7 +89,7 @@ Now
   * make TAG=${NEW_TAG} upload_github
   * NB this overwrites the current beta so we need to do this
   * git co master
-  * make LAST_TAG=${NEW_TAG} startdev
+  * make VERSION=${NEW_TAG} startdev
   * # cherry pick the changes to the changelog and VERSION
   * git checkout ${BASE_TAG}-fixes VERSION docs/content/changelog.md
   * git commit --amend
