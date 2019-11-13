@@ -71,6 +71,7 @@ type Fs struct {
 // Check the interfaces are satisfied.
 var (
 	_ fs.Fs          = &Fs{}
+	_ fs.ListRer     = &Fs{}
 	_ fs.PutStreamer = &Fs{}
 )
 
@@ -252,6 +253,10 @@ func (f *Fs) listBuckets(ctx context.Context) (entries fs.DirEntries, err error)
 			entries = append(entries, d)
 		}
 
+		if ctx.Err() != nil {
+			return entries, ctx.Err()
+		}
+
 		if !result.More {
 			break
 		}
@@ -309,6 +314,10 @@ func (f *Fs) listObjects(ctx context.Context, relative, bucketName, bucketPath s
 			entries = append(entries, NewObjectFromStorj(f, &object).setRelative(path.Join(relative, object.Path)))
 		}
 
+		if ctx.Err() != nil {
+			return entries, ctx.Err()
+		}
+
 		if !result.More {
 			break
 		}
@@ -317,6 +326,141 @@ func (f *Fs) listObjects(ctx context.Context, relative, bucketName, bucketPath s
 	}
 
 	return entries, nil
+}
+
+// ListR lists the objects and directories of the Fs starting from dir
+// recursively into out.
+//
+// dir should be "" to start from the root, and should not have trailing
+// slashes.
+//
+// This should return ErrDirNotFound if the directory isn't found.
+//
+// It should call callback for each tranche of entries read.  These need not be
+// returned in any particular order.  If callback returns an error then the
+// listing will stop immediately.
+//
+// Don't implement this unless you have a more efficient way of listing
+// recursively that doing a directory traversal.
+func (f *Fs) ListR(ctx context.Context, relative string, callback fs.ListRCallback) error {
+	fs.Infof(f, "ls -R ./%s", relative)
+
+	bucketName, bucketPath := f.absolute(relative)
+
+	if bucketName == "" {
+		if bucketPath != "" {
+			return fs.ErrorListBucketRequired
+		}
+
+		return f.listBucketsR(ctx, callback)
+	}
+
+	return f.listObjectsR(ctx, relative, bucketName, bucketPath, callback)
+}
+
+func (f *Fs) listBucketsR(ctx context.Context, callback fs.ListRCallback) (err error) {
+	fs.Debugf(f, "BKT ls -R")
+
+	opts := uplink.BucketListOptions{
+		Direction: storj.Forward,
+	}
+
+	for {
+		var entries fs.DirEntries
+
+		result, err := f.project.ListBuckets(ctx, &opts)
+		if err != nil {
+			fs.Debugf(f, "err: %+v", err)
+
+			return fs.ErrorDirNotFound
+		}
+
+		for _, bucket := range result.Items {
+			d := fs.NewDir(bucket.Name, bucket.Created).SetSize(0)
+			entries = append(entries, d)
+		}
+
+		err = callback(entries)
+		if err != nil {
+			return err
+		}
+
+		if !result.More {
+			break
+		}
+
+		opts = opts.NextPage(result)
+	}
+
+	return nil
+}
+
+func (f *Fs) listObjectsR(ctx context.Context, relative, bucketName, bucketPath string, callback fs.ListRCallback) (err error) {
+	fs.Debugf(f, "OBJ ls -R ./%s", relative)
+
+	bucket, err := f.project.OpenBucket(ctx, bucketName, f.scope.EncryptionAccess)
+	if err != nil {
+		fs.Debugf(f, "err %+v", err)
+
+		return fs.ErrorDirNotFound
+	}
+	defer bucket.Close()
+
+	// Attempt to open the directory itself. If the directory itself exists
+	// as an object it will not show up through the listing below.
+	object, err := bucket.OpenObject(ctx, bucketPath)
+	if err == nil {
+		err = callback(fs.DirEntries{NewObjectFromUplink(f, object).setRelative("")})
+		if err != nil {
+			return err
+		}
+
+		object.Close()
+	}
+
+	startAfter := ""
+
+	for {
+		var entries fs.DirEntries
+
+		opts := &uplink.ListOptions{
+			Direction: storj.After,
+			Cursor:    startAfter,
+			Prefix:    bucketPath,
+			Recursive: true,
+		}
+
+		result, err := bucket.ListObjects(ctx, opts)
+		if err != nil {
+			fs.Debugf(f, "err: %+v", err)
+
+			return err
+		}
+
+		for _, object := range result.Items {
+			if object.IsPrefix {
+				d := fs.NewDir(path.Join(relative, object.Path), object.Modified).SetSize(object.Size)
+				entries = append(entries, d)
+
+				continue
+			}
+
+			entries = append(entries, NewObjectFromStorj(f, &object).setRelative(path.Join(relative, object.Path)))
+		}
+
+		err = callback(entries)
+		if err != nil {
+			return err
+		}
+
+		if !result.More {
+			break
+		}
+
+		startAfter = result.Items[len(result.Items)-1].Path
+	}
+
+	return nil
 }
 
 // NewObject finds the Object at relative. If it can't be found it returns the
