@@ -378,6 +378,11 @@ func (f *Fs) listBucketsR(ctx context.Context, callback fs.ListRCallback) (err e
 		for _, bucket := range result.Items {
 			d := fs.NewDir(bucket.Name, bucket.Created).SetSize(0)
 			entries = append(entries, d)
+
+			err = f.listObjectsR(ctx, bucket.Name, bucket.Name, "", callback)
+			if err != nil {
+				return err
+			}
 		}
 
 		err = callback(entries)
