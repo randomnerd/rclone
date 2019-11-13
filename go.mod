@@ -18,14 +18,12 @@ require (
 	github.com/dropbox/dropbox-sdk-go-unofficial v5.4.0+incompatible
 	github.com/goftp/file-driver v0.0.0-20180502053751-5d604a0fc0c9 // indirect
 	github.com/goftp/server v0.0.0-20190712054601-1149070ae46b
+	github.com/golang-migrate/migrate/v3 v3.5.2 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
-	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20190812055157-5d271430af9f // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/jlaffaye/ftp v0.0.0-20190721194432-7cd8b0bcf3fc
 	github.com/jzelinskie/whirlpool v0.0.0-20170603002051-c19460b8caa6
-	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/koofr/go-httpclient v0.0.0-20190818202018-e0dc8fd921dc
 	github.com/koofr/go-koofrclient v0.0.0-20190724113126-8e5366da203a
 	github.com/mattn/go-colorable v0.1.2
@@ -66,7 +64,7 @@ require (
 	google.golang.org/api v0.9.0
 	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55 // indirect
 	gopkg.in/yaml.v2 v2.2.2
-	storj.io/storj v0.24.4
+	storj.io/storj v0.25.1
 )
 
 go 1.13
