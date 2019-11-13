@@ -253,10 +253,6 @@ func (f *Fs) listBuckets(ctx context.Context) (entries fs.DirEntries, err error)
 			entries = append(entries, d)
 		}
 
-		if ctx.Err() != nil {
-			return entries, ctx.Err()
-		}
-
 		if !result.More {
 			break
 		}
@@ -312,10 +308,6 @@ func (f *Fs) listObjects(ctx context.Context, relative, bucketName, bucketPath s
 			}
 
 			entries = append(entries, NewObjectFromStorj(f, &object).setRelative(path.Join(relative, object.Path)))
-		}
-
-		if ctx.Err() != nil {
-			return entries, ctx.Err()
 		}
 
 		if !result.More {
