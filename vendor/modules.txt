@@ -63,6 +63,8 @@ github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
 # github.com/billziss-gh/cgofuse v1.1.0
 github.com/billziss-gh/cgofuse/fuse
+# github.com/btcsuite/btcutil v0.0.0-20180706230648-ab6388e0c60a
+github.com/btcsuite/btcutil/base58
 # github.com/coreos/bbolt v1.3.3
 github.com/coreos/bbolt
 # github.com/cpuguy83/go-md2man v1.0.10
@@ -85,6 +87,10 @@ github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common
 github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies
 github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users
 github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users_common
+# github.com/gogo/protobuf v1.2.1
+github.com/gogo/protobuf/gogoproto
+github.com/gogo/protobuf/proto
+github.com/gogo/protobuf/protoc-gen-gogo/descriptor
 # github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
@@ -119,10 +125,12 @@ github.com/kr/fs
 github.com/mattn/go-colorable
 # github.com/mattn/go-ieproxy v0.0.0-20190805055040-f9202b1cfdeb
 github.com/mattn/go-ieproxy
-# github.com/mattn/go-isatty v0.0.8
+# github.com/mattn/go-isatty v0.0.9
 github.com/mattn/go-isatty
 # github.com/mattn/go-runewidth v0.0.4
 github.com/mattn/go-runewidth
+# github.com/minio/sha256-simd v0.0.0-20190328051042-05b4dd3047e5
+github.com/minio/sha256-simd
 # github.com/mitchellh/go-homedir v1.1.0
 github.com/mitchellh/go-homedir
 # github.com/ncw/go-acd v0.0.0-20171120105400-887eb06ab6a2
@@ -159,6 +167,13 @@ github.com/sevlyar/go-daemon
 github.com/sirupsen/logrus
 # github.com/skratchdot/open-golang v0.0.0-20190402232053-79abb63cd66e
 github.com/skratchdot/open-golang/open
+# github.com/skyrings/skyring-common v0.0.0-20160929130248-d1c0bb1cbd5e
+github.com/skyrings/skyring-common/tools/uuid
+# github.com/spacemonkeygo/errors v0.0.0-20171212215202-9064522e9fd1
+github.com/spacemonkeygo/errors
+# github.com/spacemonkeygo/monotime v0.0.0-20180824235756-e3f48a95f98a
+github.com/spacemonkeygo/monotime
+github.com/spacemonkeygo/monotime/_cgo
 # github.com/spf13/cobra v0.0.5
 github.com/spf13/cobra
 github.com/spf13/cobra/doc
@@ -169,6 +184,8 @@ github.com/stretchr/testify/assert
 github.com/stretchr/testify/require
 # github.com/t3rm1n4l/go-mega v0.0.0-20190528125457-55e675378686
 github.com/t3rm1n4l/go-mega
+# github.com/vivint/infectious v0.0.0-20190108171102-2455b059135b
+github.com/vivint/infectious
 # github.com/xanzy/ssh-agent v0.2.1
 github.com/xanzy/ssh-agent
 # github.com/youmark/pkcs8 v0.0.0-20181201043747-70daafe5d78a
@@ -185,6 +202,8 @@ github.com/yunify/qingstor-sdk-go/v3/request/signer
 github.com/yunify/qingstor-sdk-go/v3/request/unpacker
 github.com/yunify/qingstor-sdk-go/v3/service
 github.com/yunify/qingstor-sdk-go/v3/utils
+# github.com/zeebo/errs v1.2.2
+github.com/zeebo/errs
 # go.opencensus.io v0.22.0
 go.opencensus.io
 go.opencensus.io/internal
@@ -202,10 +221,23 @@ go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
+# go.uber.org/atomic v1.4.0
+go.uber.org/atomic
+# go.uber.org/multierr v1.1.0
+go.uber.org/multierr
+# go.uber.org/zap v1.10.0
+go.uber.org/zap
+go.uber.org/zap/buffer
+go.uber.org/zap/internal/bufferpool
+go.uber.org/zap/internal/color
+go.uber.org/zap/internal/exit
+go.uber.org/zap/zapcore
 # goftp.io/server v0.0.0-20190812052725-72a57b186803
 goftp.io/server
-# golang.org/x/crypto v0.0.0-20190820162420-60c769a6c586
+# golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7
+golang.org/x/crypto/argon2
 golang.org/x/crypto/bcrypt
+golang.org/x/crypto/blake2b
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
@@ -220,7 +252,7 @@ golang.org/x/crypto/scrypt
 golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/agent
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7
+# golang.org/x/net v0.0.0-20190916140828-c8589233b77d
 golang.org/x/net/bpf
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -246,9 +278,10 @@ golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sync v0.0.0-20190423024810-112230192c58
+# golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20190826163724-acd9dae8e8cc
+golang.org/x/sync/semaphore
+# golang.org/x/sys v0.0.0-20190916202348-b4ddaad3f8a3
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
 golang.org/x/sys/windows
@@ -285,7 +318,7 @@ google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/urlfetch
 # google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.23.0
+# google.golang.org/grpc v1.23.1
 google.golang.org/grpc
 google.golang.org/grpc/balancer
 google.golang.org/grpc/balancer/base
@@ -319,5 +352,52 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
+# gopkg.in/spacemonkeygo/monkit.v2 v2.0.0-20190612171030-cf5a9e6f8fd2
+gopkg.in/spacemonkeygo/monkit.v2
 # gopkg.in/yaml.v2 v2.2.2
 gopkg.in/yaml.v2
+# storj.io/drpc v0.0.7-0.20191105232401-03e121f6d8e4
+storj.io/drpc
+storj.io/drpc/drpcconn
+storj.io/drpc/drpcctx
+storj.io/drpc/drpcdebug
+storj.io/drpc/drpcerr
+storj.io/drpc/drpcmanager
+storj.io/drpc/drpcsignal
+storj.io/drpc/drpcstream
+storj.io/drpc/drpcwire
+# storj.io/storj v0.25.1
+storj.io/storj/internal/errs2
+storj.io/storj/internal/fpath
+storj.io/storj/internal/groupcancel
+storj.io/storj/internal/memory
+storj.io/storj/internal/readcloser
+storj.io/storj/internal/sync2
+storj.io/storj/lib/uplink
+storj.io/storj/pkg/encryption
+storj.io/storj/pkg/identity
+storj.io/storj/pkg/macaroon
+storj.io/storj/pkg/paths
+storj.io/storj/pkg/pb
+storj.io/storj/pkg/peertls
+storj.io/storj/pkg/peertls/extensions
+storj.io/storj/pkg/peertls/tlsopts
+storj.io/storj/pkg/pkcrypto
+storj.io/storj/pkg/ranger
+storj.io/storj/pkg/rpc
+storj.io/storj/pkg/rpc/rpcpeer
+storj.io/storj/pkg/rpc/rpcpool
+storj.io/storj/pkg/rpc/rpcstatus
+storj.io/storj/pkg/signing
+storj.io/storj/pkg/storj
+storj.io/storj/storage
+storj.io/storj/uplink/ecclient
+storj.io/storj/uplink/eestream
+storj.io/storj/uplink/metainfo
+storj.io/storj/uplink/metainfo/kvmetainfo
+storj.io/storj/uplink/piecestore
+storj.io/storj/uplink/storage/meta
+storj.io/storj/uplink/storage/objects
+storj.io/storj/uplink/storage/segments
+storj.io/storj/uplink/storage/streams
+storj.io/storj/uplink/stream
