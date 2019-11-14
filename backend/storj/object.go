@@ -142,7 +142,7 @@ func (o *Object) Fs() fs.Info {
 
 // Hash returns the selected checksum of the file
 // If no checksum is available it returns ""
-func (o *Object) Hash(ctx context.Context, ty hash.Type) (string, error) {
+func (o *Object) Hash(ctx context.Context, ty hash.Type) (_ string, err error) {
 	fs.Debugf(o, "%s", ty)
 
 	return "", hash.ErrUnsupported
@@ -154,14 +154,14 @@ func (o *Object) Storable() bool {
 }
 
 // SetModTime sets the metadata on the object to set the modification date
-func (o *Object) SetModTime(ctx context.Context, t time.Time) error {
+func (o *Object) SetModTime(ctx context.Context, t time.Time) (err error) {
 	fs.Debugf(o, "touch -d %q sj://%s", t, path.Join(o.absolute()))
 
 	return fs.ErrorCantSetModTime
 }
 
 // Open opens the file for read.  Call Close() on the returned io.ReadCloser
-func (o *Object) Open(ctx context.Context, options ...fs.OpenOption) (io.ReadCloser, error) {
+func (o *Object) Open(ctx context.Context, options ...fs.OpenOption) (_ io.ReadCloser, err error) {
 	fs.Infof(o, "cat sj://%s # %+v", path.Join(o.absolute()), options)
 
 	bucketName, bucketPath := o.absolute()
@@ -170,13 +170,13 @@ func (o *Object) Open(ctx context.Context, options ...fs.OpenOption) (io.ReadClo
 	if err != nil {
 		return nil, err
 	}
-	defer bucket.Close()
+	defer fs.CheckClose(bucket, &err)
 
 	object, err := bucket.OpenObject(ctx, bucketPath)
 	if err != nil {
 		return nil, err
 	}
-	defer object.Close()
+	defer fs.CheckClose(object, &err)
 
 	var (
 		offset int64 = 0
@@ -220,7 +220,7 @@ func (o *Object) Open(ctx context.Context, options ...fs.OpenOption) (io.ReadClo
 // When called from outside a Fs by rclone, src.Size() will always be >= 0.
 // But for unknown-sized objects (indicated by src.Size() == -1), Upload should either
 // return an error or update the object properly (rather than e.g. calling panic).
-func (o *Object) Update(ctx context.Context, in io.Reader, src fs.ObjectInfo, options ...fs.OpenOption) error {
+func (o *Object) Update(ctx context.Context, in io.Reader, src fs.ObjectInfo, options ...fs.OpenOption) (err error) {
 	fs.Debugf(o, "cp input ./%s %+v", src.Remote(), options)
 
 	oNew, err := o.fs.Put(ctx, in, src, options...)
@@ -233,7 +233,7 @@ func (o *Object) Update(ctx context.Context, in io.Reader, src fs.ObjectInfo, op
 }
 
 // Remove this object.
-func (o *Object) Remove(ctx context.Context) error {
+func (o *Object) Remove(ctx context.Context) (err error) {
 	fs.Infof(o, "rm sj://%s", path.Join(o.absolute()))
 
 	bucketName, bucketPath := o.absolute()
@@ -242,14 +242,14 @@ func (o *Object) Remove(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	defer u.Close()
-	defer p.Close()
+	defer fs.CheckClose(u, &err)
+	defer fs.CheckClose(p, &err)
 
 	bucket, err := p.OpenBucket(ctx, bucketName, o.fs.scope.EncryptionAccess)
 	if err != nil {
 		return err
 	}
-	defer bucket.Close()
+	defer fs.CheckClose(bucket, &err)
 
 	err = bucket.DeleteObject(ctx, bucketPath)
 

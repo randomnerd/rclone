@@ -133,11 +133,11 @@ func NewFs(name, root string, m configmap.Mapper) (_ fs.Fs, err error) {
 			if err != nil {
 				return f, errors.Wrap(err, "storj: bucket")
 			}
-			defer bucket.Close()
+			defer fs.CheckClose(bucket, &err)
 
 			object, err := bucket.OpenObject(ctx, bucketPath)
 			if err == nil {
-				defer object.Close()
+				defer fs.CheckClose(object, &err)
 
 				if !object.Meta.IsPrefix {
 					return f, fs.ErrorIsFile
@@ -164,7 +164,7 @@ func (f *Fs) connect(ctx context.Context) (upl *uplink.Uplink, project *uplink.P
 
 	project, err = upl.OpenProject(ctx, f.scope.SatelliteAddr, f.scope.APIKey)
 	if err != nil {
-		upl.Close()
+		fs.CheckClose(upl, &err)
 
 		return nil, nil, errors.Wrap(err, "storj: project")
 	}
@@ -272,7 +272,7 @@ func (f *Fs) listObjects(ctx context.Context, relative, bucketName, bucketPath s
 
 		return nil, fs.ErrorDirNotFound
 	}
-	defer bucket.Close()
+	defer fs.CheckClose(bucket, &err)
 
 	// Attempt to open the directory itself. If the directory itself exists
 	// as an object it will not show up through the listing below.
@@ -280,7 +280,7 @@ func (f *Fs) listObjects(ctx context.Context, relative, bucketName, bucketPath s
 	if err == nil {
 		entries = append(entries, NewObjectFromUplink(f, object).setRelative(""))
 
-		object.Close()
+		fs.CheckClose(object, &err)
 	}
 
 	startAfter := ""
@@ -334,7 +334,7 @@ func (f *Fs) listObjects(ctx context.Context, relative, bucketName, bucketPath s
 //
 // Don't implement this unless you have a more efficient way of listing
 // recursively that doing a directory traversal.
-func (f *Fs) ListR(ctx context.Context, relative string, callback fs.ListRCallback) error {
+func (f *Fs) ListR(ctx context.Context, relative string, callback fs.ListRCallback) (err error) {
 	fs.Infof(f, "ls -R ./%s", relative)
 
 	bucketName, bucketPath := f.absolute(relative)
@@ -401,7 +401,7 @@ func (f *Fs) listObjectsR(ctx context.Context, relative, bucketName, bucketPath 
 
 		return fs.ErrorDirNotFound
 	}
-	defer bucket.Close()
+	defer fs.CheckClose(bucket, &err)
 
 	// Attempt to open the directory itself. If the directory itself exists
 	// as an object it will not show up through the listing below.
@@ -412,7 +412,7 @@ func (f *Fs) listObjectsR(ctx context.Context, relative, bucketName, bucketPath 
 			return err
 		}
 
-		object.Close()
+		fs.CheckClose(object, &err)
 	}
 
 	startAfter := ""
@@ -462,7 +462,7 @@ func (f *Fs) listObjectsR(ctx context.Context, relative, bucketName, bucketPath 
 
 // NewObject finds the Object at relative. If it can't be found it returns the
 // error ErrorObjectNotFound.
-func (f *Fs) NewObject(ctx context.Context, relative string) (fs.Object, error) {
+func (f *Fs) NewObject(ctx context.Context, relative string) (_ fs.Object, err error) {
 	fs.Infof(f, "stat ./%s", relative)
 
 	bucketName, bucketPath := f.absolute(relative)
@@ -473,7 +473,7 @@ func (f *Fs) NewObject(ctx context.Context, relative string) (fs.Object, error) 
 
 		return nil, fs.ErrorObjectNotFound
 	}
-	defer bucket.Close()
+	defer fs.CheckClose(bucket, &err)
 
 	object, err := bucket.OpenObject(ctx, bucketPath)
 	if err != nil {
@@ -481,7 +481,7 @@ func (f *Fs) NewObject(ctx context.Context, relative string) (fs.Object, error) 
 
 		return nil, fs.ErrorObjectNotFound
 	}
-	defer object.Close()
+	defer fs.CheckClose(object, &err)
 
 	o := NewObjectFromUplink(f, object)
 
@@ -503,7 +503,7 @@ func (f *Fs) NewObject(ctx context.Context, relative string) (fs.Object, error) 
 //
 // May create the object even if it returns an error - if so will return the
 // object and the error, otherwise will return nil and the error
-func (f *Fs) Put(ctx context.Context, in io.Reader, src fs.ObjectInfo, options ...fs.OpenOption) (fs.Object, error) {
+func (f *Fs) Put(ctx context.Context, in io.Reader, src fs.ObjectInfo, options ...fs.OpenOption) (_ fs.Object, err error) {
 	fs.Infof(f, "cp input ./%s # %+v %d", src.Remote(), options, src.Size())
 
 	// Reject options we don't support.
@@ -534,14 +534,14 @@ func (f *Fs) Put(ctx context.Context, in io.Reader, src fs.ObjectInfo, options .
 	if err != nil {
 		return nil, err
 	}
-	defer u.Close()
-	defer p.Close()
+	defer fs.CheckClose(u, &err)
+	defer fs.CheckClose(p, &err)
 
 	bucket, err := p.OpenBucket(ctx, bucketName, f.scope.EncryptionAccess)
 	if err != nil {
 		return nil, err
 	}
-	defer bucket.Close()
+	defer fs.CheckClose(bucket, &err)
 
 	out, err := bucket.NewWriter(ctx, bucketPath, &uplink.UploadOptions{
 		Metadata: map[string]string{
@@ -560,7 +560,7 @@ func (f *Fs) Put(ctx context.Context, in io.Reader, src fs.ObjectInfo, options .
 			fs.Debugf(f, "cp input ./%s %+v: copied %d %+v", src.Remote(), options, n, err)
 
 			if err == io.EOF {
-				out.Close()
+				fs.CheckClose(out, &err)
 			}
 
 			ch <- err
@@ -590,7 +590,7 @@ func (f *Fs) Put(ctx context.Context, in io.Reader, src fs.ObjectInfo, options .
 	if err != nil {
 		return nil, err
 	}
-	defer object.Close()
+	defer fs.CheckClose(object, &err)
 
 	o := NewObjectFromUplink(f, object).setRelative(src.Remote())
 
@@ -602,14 +602,14 @@ func (f *Fs) Put(ctx context.Context, in io.Reader, src fs.ObjectInfo, options .
 //
 // May create the object even if it returns an error - if so will return the
 // object and the error, otherwise will return nil and the error.
-func (f *Fs) PutStream(ctx context.Context, in io.Reader, src fs.ObjectInfo, options ...fs.OpenOption) (fs.Object, error) {
+func (f *Fs) PutStream(ctx context.Context, in io.Reader, src fs.ObjectInfo, options ...fs.OpenOption) (_ fs.Object, err error) {
 	return f.Put(ctx, in, src, options...)
 }
 
 // Mkdir makes the directory (container, bucket)
 //
 // Shouldn't return an error if it already exists
-func (f *Fs) Mkdir(ctx context.Context, relative string) error {
+func (f *Fs) Mkdir(ctx context.Context, relative string) (err error) {
 	fs.Infof(f, "mkdir -p ./%s", relative)
 
 	bucketName, _ := f.absolute(relative)
@@ -632,18 +632,18 @@ func (f *Fs) Mkdir(ctx context.Context, relative string) error {
 
 		_, err = f.project.CreateBucket(ctx, bucketName, cfg)
 		if err != nil {
-			return err
+			return
 		}
 	}
-	bucket.Close()
+	fs.CheckClose(bucket, &err)
 
-	return nil
+	return
 }
 
 // Rmdir removes the directory (container, bucket) if empty
 //
 // Return an error if it doesn't exist or isn't empty
-func (f *Fs) Rmdir(ctx context.Context, relative string) error {
+func (f *Fs) Rmdir(ctx context.Context, relative string) (err error) {
 	fs.Infof(f, "rmdir ./%s", relative)
 
 	bucketName, bucketPath := f.absolute(relative)
@@ -658,7 +658,7 @@ func (f *Fs) Rmdir(ctx context.Context, relative string) error {
 	if err != nil {
 		return fs.ErrorDirNotFound
 	}
-	defer bucket.Close()
+	defer fs.CheckClose(bucket, &err)
 
 	if bucketPath == "" {
 		result, err := bucket.ListObjects(ctx, &storj.ListOptions{Direction: storj.After, Recursive: true, Limit: 1})
@@ -677,7 +677,7 @@ func (f *Fs) Rmdir(ctx context.Context, relative string) error {
 	if err != nil {
 		return fs.ErrorDirNotFound
 	}
-	defer object.Close()
+	defer fs.CheckClose(object, &err)
 
 	if object.Meta.IsPrefix {
 		return fs.ErrorDirectoryNotEmpty
