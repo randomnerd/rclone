@@ -13,8 +13,8 @@ import (
 	"github.com/rclone/rclone/fs/rc"
 )
 
-// Maximum number of completed transfers in startedTransfers list
-const maxCompletedTransfers = 100
+// MaxCompletedTransfers specifies maximum number of completed transfers in startedTransfers list
+var MaxCompletedTransfers = 100
 
 // StatsInfo accounts all transfers
 type StatsInfo struct {
@@ -332,10 +332,10 @@ Elapsed time:  %10v
 	// Add per transfer stats if required
 	if !fs.Config.StatsOneLine {
 		if !s.checking.empty() {
-			_, _ = fmt.Fprintf(buf, "Checking:\n%s\n", s.checking.String(s.inProgress))
+			_, _ = fmt.Fprintf(buf, "Checking:\n%s\n", s.checking.String(s.inProgress, s.transferring))
 		}
 		if !s.transferring.empty() {
-			_, _ = fmt.Fprintf(buf, "Transferring:\n%s\n", s.transferring.String(s.inProgress))
+			_, _ = fmt.Fprintf(buf, "Transferring:\n%s\n", s.transferring.String(s.inProgress, nil))
 		}
 	}
 
@@ -475,14 +475,16 @@ func (s *StatsInfo) Errored() bool {
 }
 
 // Error adds a single error into the stats, assigns lastError and eventually sets fatalError or retryError
-func (s *StatsInfo) Error(err error) {
-	if err == nil {
-		return
+func (s *StatsInfo) Error(err error) error {
+	if err == nil || fserrors.IsCounted(err) {
+		return err
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.errors++
 	s.lastError = err
+	err = fserrors.FsError(err)
+	fserrors.Count(err)
 	switch {
 	case fserrors.IsFatalError(err):
 		s.fatalError = true
@@ -495,6 +497,7 @@ func (s *StatsInfo) Error(err error) {
 	case !fserrors.IsNoRetryError(err):
 		s.retryError = true
 	}
+	return err
 }
 
 // RetryAfter returns the time to retry after if it is set.  It will
@@ -624,11 +627,29 @@ func (s *StatsInfo) RemoveTransfer(transfer *Transfer) {
 	s.mu.Unlock()
 }
 
-// PruneTransfers makes sure there aren't too many old transfers
+// PruneAllTransfers removes all finished transfers.
+func (s *StatsInfo) PruneAllTransfers() {
+	s.mu.Lock()
+	for i := 0; i < len(s.startedTransfers); i++ {
+		tr := s.startedTransfers[i]
+		if tr.IsDone() {
+			s.removeTransfer(tr, i)
+			// i'th element is removed, recover iterator to not skip next element.
+			i--
+		}
+	}
+	s.mu.Unlock()
+}
+
+// PruneTransfers makes sure there aren't too many old transfers by removing
+// single finished transfer.
 func (s *StatsInfo) PruneTransfers() {
+	if MaxCompletedTransfers < 0 {
+		return
+	}
 	s.mu.Lock()
 	// remove a transfer from the start if we are over quota
-	if len(s.startedTransfers) > maxCompletedTransfers+fs.Config.Transfers {
+	if len(s.startedTransfers) > MaxCompletedTransfers+fs.Config.Transfers {
 		for i, tr := range s.startedTransfers {
 			if tr.IsDone() {
 				s.removeTransfer(tr, i)

@@ -2,7 +2,7 @@
 bazil.org/fuse
 bazil.org/fuse/fs
 bazil.org/fuse/fuseutil
-# cloud.google.com/go v0.44.3
+# cloud.google.com/go v0.47.0
 cloud.google.com/go/compute/metadata
 # github.com/Azure/azure-pipeline-go v0.2.2
 github.com/Azure/azure-pipeline-go/pipeline
@@ -14,7 +14,7 @@ github.com/Unknwon/goconfig
 github.com/a8m/tree
 # github.com/abbot/go-http-auth v0.4.0
 github.com/abbot/go-http-auth
-# github.com/anacrolix/dms v1.0.0
+# github.com/anacrolix/dms v1.1.0
 github.com/anacrolix/dms/dlna
 github.com/anacrolix/dms/soap
 github.com/anacrolix/dms/ssdp
@@ -22,7 +22,7 @@ github.com/anacrolix/dms/upnp
 github.com/anacrolix/dms/upnpav
 # github.com/atotto/clipboard v0.1.2
 github.com/atotto/clipboard
-# github.com/aws/aws-sdk-go v1.23.8
+# github.com/aws/aws-sdk-go v1.25.31
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/awserr
 github.com/aws/aws-sdk-go/aws/awsutil
@@ -44,6 +44,7 @@ github.com/aws/aws-sdk-go/aws/signer/v4
 github.com/aws/aws-sdk-go/internal/ini
 github.com/aws/aws-sdk-go/internal/s3err
 github.com/aws/aws-sdk-go/internal/sdkio
+github.com/aws/aws-sdk-go/internal/sdkmath
 github.com/aws/aws-sdk-go/internal/sdkrand
 github.com/aws/aws-sdk-go/internal/sdkuri
 github.com/aws/aws-sdk-go/internal/shareddefaults
@@ -61,12 +62,10 @@ github.com/aws/aws-sdk-go/service/s3/s3iface
 github.com/aws/aws-sdk-go/service/s3/s3manager
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
-# github.com/billziss-gh/cgofuse v1.1.0
+# github.com/billziss-gh/cgofuse v1.2.0
 github.com/billziss-gh/cgofuse/fuse
 # github.com/btcsuite/btcutil v0.0.0-20180706230648-ab6388e0c60a
 github.com/btcsuite/btcutil/base58
-# github.com/coreos/bbolt v1.3.3
-github.com/coreos/bbolt
 # github.com/cpuguy83/go-md2man v1.0.10
 github.com/cpuguy83/go-md2man/md2man
 # github.com/davecgh/go-spew v1.1.1
@@ -87,10 +86,14 @@ github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common
 github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies
 github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users
 github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users_common
+# github.com/etcd-io/bbolt v1.3.3
+github.com/etcd-io/bbolt
 # github.com/gogo/protobuf v1.2.1
 github.com/gogo/protobuf/gogoproto
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/protoc-gen-gogo/descriptor
+# github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9
+github.com/golang/groupcache/lru
 # github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
@@ -101,11 +104,9 @@ github.com/golang/protobuf/ptypes/timestamp
 github.com/google/go-querystring/query
 # github.com/googleapis/gax-go/v2 v2.0.5
 github.com/googleapis/gax-go/v2
-# github.com/hashicorp/golang-lru v0.5.3
-github.com/hashicorp/golang-lru/simplelru
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
-# github.com/jlaffaye/ftp v0.0.0-20190721194432-7cd8b0bcf3fc
+# github.com/jlaffaye/ftp v0.0.0-20191025175106-a59fe673c9b2
 github.com/jlaffaye/ftp
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
@@ -121,13 +122,13 @@ github.com/koofr/go-httpclient
 github.com/koofr/go-koofrclient
 # github.com/kr/fs v0.1.0
 github.com/kr/fs
-# github.com/mattn/go-colorable v0.1.2
+# github.com/mattn/go-colorable v0.1.4
 github.com/mattn/go-colorable
 # github.com/mattn/go-ieproxy v0.0.0-20190805055040-f9202b1cfdeb
 github.com/mattn/go-ieproxy
-# github.com/mattn/go-isatty v0.0.9
+# github.com/mattn/go-isatty v0.0.11-0.20191112051248-2a2f0ea997f9
 github.com/mattn/go-isatty
-# github.com/mattn/go-runewidth v0.0.4
+# github.com/mattn/go-runewidth v0.0.6
 github.com/mattn/go-runewidth
 # github.com/minio/sha256-simd v0.0.0-20190328051042-05b4dd3047e5
 github.com/minio/sha256-simd
@@ -177,20 +178,20 @@ github.com/spacemonkeygo/monotime/_cgo
 # github.com/spf13/cobra v0.0.5
 github.com/spf13/cobra
 github.com/spf13/cobra/doc
-# github.com/spf13/pflag v1.0.3
+# github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
 # github.com/stretchr/testify v1.4.0
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/require
-# github.com/t3rm1n4l/go-mega v0.0.0-20190528125457-55e675378686
+# github.com/t3rm1n4l/go-mega v0.0.0-20191014094753-e8695d78299a
 github.com/t3rm1n4l/go-mega
 # github.com/vivint/infectious v0.0.0-20190108171102-2455b059135b
 github.com/vivint/infectious
 # github.com/xanzy/ssh-agent v0.2.1
 github.com/xanzy/ssh-agent
-# github.com/youmark/pkcs8 v0.0.0-20181201043747-70daafe5d78a
+# github.com/youmark/pkcs8 v0.0.0-20191102193632-94c173a94d60
 github.com/youmark/pkcs8
-# github.com/yunify/qingstor-sdk-go/v3 v3.0.2
+# github.com/yunify/qingstor-sdk-go/v3 v3.1.1
 github.com/yunify/qingstor-sdk-go/v3
 github.com/yunify/qingstor-sdk-go/v3/config
 github.com/yunify/qingstor-sdk-go/v3/logger
@@ -204,7 +205,7 @@ github.com/yunify/qingstor-sdk-go/v3/service
 github.com/yunify/qingstor-sdk-go/v3/utils
 # github.com/zeebo/errs v1.2.2
 github.com/zeebo/errs
-# go.opencensus.io v0.22.0
+# go.opencensus.io v0.22.2
 go.opencensus.io
 go.opencensus.io/internal
 go.opencensus.io/internal/tagencoding
@@ -234,7 +235,7 @@ go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
 # goftp.io/server v0.0.0-20190812052725-72a57b186803
 goftp.io/server
-# golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7
+# golang.org/x/crypto v0.0.0-20191108234033-bd318be0434a
 golang.org/x/crypto/argon2
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blake2b
@@ -252,7 +253,7 @@ golang.org/x/crypto/scrypt
 golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/agent
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20190916140828-c8589233b77d
+# golang.org/x/net v0.0.0-20191109021931-daa7c04131f5
 golang.org/x/net/bpf
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -281,7 +282,7 @@ golang.org/x/oauth2/jwt
 # golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 golang.org/x/sync/errgroup
 golang.org/x/sync/semaphore
-# golang.org/x/sys v0.0.0-20190916202348-b4ddaad3f8a3
+# golang.org/x/sys v0.0.0-20191113165036-4c7a9d0fe056
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
 golang.org/x/sys/windows
@@ -291,21 +292,21 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
+# golang.org/x/time v0.0.0-20191024005414-555d28b269f0
 golang.org/x/time/rate
-# google.golang.org/api v0.9.0
+# google.golang.org/api v0.13.0
 google.golang.org/api/drive/v2
 google.golang.org/api/drive/v3
-google.golang.org/api/gensupport
 google.golang.org/api/googleapi
 google.golang.org/api/googleapi/internal/uritemplates
 google.golang.org/api/googleapi/transport
 google.golang.org/api/internal
+google.golang.org/api/internal/gensupport
 google.golang.org/api/option
 google.golang.org/api/storage/v1
 google.golang.org/api/transport/http
 google.golang.org/api/transport/http/internal/propagation
-# google.golang.org/appengine v1.6.1
+# google.golang.org/appengine v1.6.5
 google.golang.org/appengine
 google.golang.org/appengine/internal
 google.golang.org/appengine/internal/app_identity
@@ -316,10 +317,11 @@ google.golang.org/appengine/internal/modules
 google.golang.org/appengine/internal/remote_api
 google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/urlfetch
-# google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
+# google.golang.org/genproto v0.0.0-20191108220845-16a3f7862a1a
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.23.1
+# google.golang.org/grpc v1.25.1
 google.golang.org/grpc
+google.golang.org/grpc/backoff
 google.golang.org/grpc/balancer
 google.golang.org/grpc/balancer/base
 google.golang.org/grpc/balancer/roundrobin
@@ -335,10 +337,13 @@ google.golang.org/grpc/internal
 google.golang.org/grpc/internal/backoff
 google.golang.org/grpc/internal/balancerload
 google.golang.org/grpc/internal/binarylog
+google.golang.org/grpc/internal/buffer
 google.golang.org/grpc/internal/channelz
 google.golang.org/grpc/internal/envconfig
 google.golang.org/grpc/internal/grpcrand
 google.golang.org/grpc/internal/grpcsync
+google.golang.org/grpc/internal/resolver/dns
+google.golang.org/grpc/internal/resolver/passthrough
 google.golang.org/grpc/internal/syscall
 google.golang.org/grpc/internal/transport
 google.golang.org/grpc/keepalive
@@ -346,17 +351,15 @@ google.golang.org/grpc/metadata
 google.golang.org/grpc/naming
 google.golang.org/grpc/peer
 google.golang.org/grpc/resolver
-google.golang.org/grpc/resolver/dns
-google.golang.org/grpc/resolver/passthrough
 google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
 # gopkg.in/spacemonkeygo/monkit.v2 v2.0.0-20190612171030-cf5a9e6f8fd2
 gopkg.in/spacemonkeygo/monkit.v2
-# gopkg.in/yaml.v2 v2.2.2
+# gopkg.in/yaml.v2 v2.2.5
 gopkg.in/yaml.v2
-# storj.io/drpc v0.0.7-0.20191105232401-03e121f6d8e4
+# storj.io/drpc v0.0.7-0.20191115031725-2171c57838d2
 storj.io/drpc
 storj.io/drpc/drpcconn
 storj.io/drpc/drpcctx
@@ -366,13 +369,7 @@ storj.io/drpc/drpcmanager
 storj.io/drpc/drpcsignal
 storj.io/drpc/drpcstream
 storj.io/drpc/drpcwire
-# storj.io/storj v0.25.1
-storj.io/storj/internal/errs2
-storj.io/storj/internal/fpath
-storj.io/storj/internal/groupcancel
-storj.io/storj/internal/memory
-storj.io/storj/internal/readcloser
-storj.io/storj/internal/sync2
+# storj.io/storj v0.26.1
 storj.io/storj/lib/uplink
 storj.io/storj/pkg/encryption
 storj.io/storj/pkg/identity
@@ -390,6 +387,12 @@ storj.io/storj/pkg/rpc/rpcpool
 storj.io/storj/pkg/rpc/rpcstatus
 storj.io/storj/pkg/signing
 storj.io/storj/pkg/storj
+storj.io/storj/private/errs2
+storj.io/storj/private/fpath
+storj.io/storj/private/groupcancel
+storj.io/storj/private/memory
+storj.io/storj/private/readcloser
+storj.io/storj/private/sync2
 storj.io/storj/storage
 storj.io/storj/uplink/ecclient
 storj.io/storj/uplink/eestream
