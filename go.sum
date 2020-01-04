@@ -245,7 +245,6 @@ github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NH
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/jackc/fake v0.0.0-20150926172116-812a484cc733/go.mod h1:WrMFNQdiFJ80sQsxDoMokWK1W5TQtxBFNpzWTD84ibQ=
 github.com/jackc/pgx v3.2.0+incompatible/go.mod h1:0ZGrqGqkRlliWnWB4zKnWtjbSWbGkVEFm4TeybAXq+I=
-github.com/jbenet/go-base58 v0.0.0-20150317085156-6237cf65f3a6/go.mod h1:r/8JmuR0qjuCiEhAolkfvdZgmPiHTnJaG0UXCSeR1Zo=
 github.com/jlaffaye/ftp v0.0.0-20190624084859-c1312a7102bf/go.mod h1:lli8NYPQOFy3O++YmYbqVgOcQ1JPCwdOy+5zSjKJ9qY=
 github.com/jlaffaye/ftp v0.0.0-20191025175106-a59fe673c9b2 h1:WY3P4euRv9s8F2rpZUK1jnk4ZMiV3O2ltdnoZK/GTUU=
 github.com/jlaffaye/ftp v0.0.0-20191025175106-a59fe673c9b2/go.mod h1:PwUeyujmhaGohgOf0kJKxPfk3HcRv8QD/wAUN44go4k=
@@ -702,5 +701,5 @@ honnef.co/go/tools v0.0.1-2019.2.3/go.mod h1:a3bituU0lyd329TUQxRnasdCoJDkEUEAqEt
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
 storj.io/drpc v0.0.7-0.20191115031725-2171c57838d2 h1:8SgLYEhe99R8QlAD1EAOBPRyIR+cn2hqkXtWlAUPf/c=
 storj.io/drpc v0.0.7-0.20191115031725-2171c57838d2/go.mod h1:/ascUDbzNAv0A3Jj7wUIKFBH2JdJ2uJIBO/b9+2yHgQ=
-storj.io/storj v0.26.1 h1:DJ7WpZXD4BfsYs5CVOwgzCraeepe22igW2xCr8VrKlE=
-storj.io/storj v0.26.1/go.mod h1:dgj21C3P1aD0Xwu6HvSWUOspIj3wvplbpYYRGiRfzAs=
+storj.io/storj v0.28.4 h1:gQoL2nwpJ0r4xOZMvZ6AUCGtWtFV2VGCyAKyohzq7Ms=
+storj.io/storj v0.28.4/go.mod h1:EOPjeCQTZQR2ml3dUh0EdU14N1SF+EIA6qwXbQponU4=

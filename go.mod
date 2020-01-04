@@ -66,7 +66,7 @@ require (
 	google.golang.org/genproto v0.0.0-20191108220845-16a3f7862a1a // indirect
 	google.golang.org/grpc v1.25.1 // indirect
 	gopkg.in/yaml.v2 v2.2.5
-	storj.io/storj v0.26.1
+	storj.io/storj v0.28.4
 )
 
 go 1.13
