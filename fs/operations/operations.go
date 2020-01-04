@@ -721,6 +721,9 @@ func (c *checkMarch) DstOnly(dst fs.DirEntry) (recurse bool) {
 		atomic.AddInt32(&c.srcFilesMissing, 1)
 	case fs.Directory:
 		// Do the same thing to the entire contents of the directory
+		if c.oneway {
+			return false
+		}
 		return true
 	default:
 		panic("Bad object in DirEntries")
@@ -1702,11 +1705,14 @@ func moveOrCopyFile(ctx context.Context, fdst fs.Fs, fsrc fs.Fs, dstFileName str
 	}
 
 	// Find dst object if it exists
-	dstObj, err := fdst.NewObject(ctx, dstFileName)
-	if err == fs.ErrorObjectNotFound {
-		dstObj = nil
-	} else if err != nil {
-		return err
+	var dstObj fs.Object
+	if !fs.Config.NoCheckDest {
+		dstObj, err = fdst.NewObject(ctx, dstFileName)
+		if err == fs.ErrorObjectNotFound {
+			dstObj = nil
+		} else if err != nil {
+			return err
+		}
 	}
 
 	// Special case for changing case of a file on a case insensitive remote

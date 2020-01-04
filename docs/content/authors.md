@@ -263,7 +263,7 @@ Contributors
   * garry415 <garry.415@gmail.com>
   * forgems <forgems@gmail.com>
   * Florian Apolloner <florian@apolloner.eu>
-  * Aleksandar Jankovic <office@ajankovic.com>
+  * Aleksandar Janković <office@ajankovic.com> <ajankovic@users.noreply.github.com>
   * Maran <maran@protonmail.com>
   * nguyenhuuluan434 <nguyenhuuluan434@gmail.com>
   * Laura Hausmann <zotan@zotan.pw> <laura@hausmann.dev>
@@ -313,3 +313,9 @@ Contributors
   * Marco Molteni <marco.molteni@mailbox.org>
   * Ankur Gupta <ankur0493@gmail.com>
   * Maciej Zimnoch <maciej@scylladb.com>
+  * anuar45 <serdaliyev.anuar@gmail.com>
+  * Fernando <ferferga@users.noreply.github.com>
+  * David Cole <david.cole@sohonet.com>
+  * Wei He <git@weispot.com>
+  * Outvi V <19144373+outloudvi@users.noreply.github.com>
+  * Thomas Kriechbaumer <thomas@kriechbaumer.name>

@@ -292,7 +292,7 @@ func (s *StatsInfo) String() string {
 		}
 	}
 
-	_, _ = fmt.Fprintf(buf, "%s%10s / %s, %s, %s, ETA %s%s",
+	_, _ = fmt.Fprintf(buf, "%s%10s / %s, %s, %s, ETA %s%s\n",
 		dateString,
 		fs.SizeSuffix(s.bytes),
 		fs.SizeSuffix(totalSize).Unit("Bytes"),
@@ -313,16 +313,23 @@ func (s *StatsInfo) String() string {
 			errorDetails = " (no need to retry)"
 		}
 
-		_, _ = fmt.Fprintf(buf, `
-Errors:        %10d%s
-Checks:        %10d / %d, %s
-Transferred:   %10d / %d, %s
-Elapsed time:  %10v
-`,
-			s.errors, errorDetails,
-			s.checks, totalChecks, percent(s.checks, totalChecks),
-			s.transfers, totalTransfer, percent(s.transfers, totalTransfer),
-			dtRounded)
+		// Add only non zero stats
+		if s.errors != 0 {
+			_, _ = fmt.Fprintf(buf, "Errors:        %10d%s\n",
+				s.errors, errorDetails)
+		}
+		if s.checks != 0 || totalChecks != 0 {
+			_, _ = fmt.Fprintf(buf, "Checks:        %10d / %d, %s\n",
+				s.checks, totalChecks, percent(s.checks, totalChecks))
+		}
+		if s.deletes != 0 {
+			_, _ = fmt.Fprintf(buf, "Deleted:       %10d\n", s.deletes)
+		}
+		if s.transfers != 0 || totalTransfer != 0 {
+			_, _ = fmt.Fprintf(buf, "Transferred:   %10d / %d, %s\n",
+				s.transfers, totalTransfer, percent(s.transfers, totalTransfer))
+		}
+		_, _ = fmt.Fprintf(buf, "Elapsed time:  %10v\n", dtRounded)
 	}
 
 	// checking and transferring have their own locking so unlock
@@ -622,20 +629,6 @@ func (s *StatsInfo) RemoveTransfer(transfer *Transfer) {
 		if tr == transfer {
 			s.removeTransfer(tr, i)
 			break
-		}
-	}
-	s.mu.Unlock()
-}
-
-// PruneAllTransfers removes all finished transfers.
-func (s *StatsInfo) PruneAllTransfers() {
-	s.mu.Lock()
-	for i := 0; i < len(s.startedTransfers); i++ {
-		tr := s.startedTransfers[i]
-		if tr.IsDone() {
-			s.removeTransfer(tr, i)
-			// i'th element is removed, recover iterator to not skip next element.
-			i--
 		}
 	}
 	s.mu.Unlock()

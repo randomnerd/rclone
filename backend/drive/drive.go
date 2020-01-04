@@ -327,6 +327,17 @@ or move the photos locally and use the date the image was taken
 (created) set as the modification date.`,
 			Advanced: true,
 		}, {
+			Name:    "use_shared_date",
+			Default: false,
+			Help: `Use date file was shared instead of modified date.
+
+Note that, as with "--drive-use-created-date", this flag may have
+unexpected consequences when uploading/downloading files.
+
+If both this flag and "--drive-use-created-date" are set, the created
+date is used.`,
+			Advanced: true,
+		}, {
 			Name:     "list_chunk",
 			Default:  1000,
 			Help:     "Size of listing chunk 100-1000. 0 to disable.",
@@ -463,6 +474,7 @@ type Options struct {
 	ImportExtensions          string        `config:"import_formats"`
 	AllowImportNameChange     bool          `config:"allow_import_name_change"`
 	UseCreatedDate            bool          `config:"use_created_date"`
+	UseSharedDate             bool          `config:"use_shared_date"`
 	ListChunk                 int64         `config:"list_chunk"`
 	Impersonate               string        `config:"impersonate"`
 	AlternateExport           bool          `config:"alternate_export"`
@@ -693,6 +705,9 @@ func (f *Fs) list(ctx context.Context, dirIDs []string, title string, directorie
 
 	if f.opt.AuthOwnerOnly {
 		fields += ",owners"
+	}
+	if f.opt.UseSharedDate {
+		fields += ",sharedWithMeTime"
 	}
 	if f.opt.SkipChecksumGphotos {
 		fields += ",spaces"
@@ -1095,6 +1110,8 @@ func (f *Fs) newBaseObject(remote string, info *drive.File) baseObject {
 	modifiedDate := info.ModifiedTime
 	if f.opt.UseCreatedDate {
 		modifiedDate = info.CreatedTime
+	} else if f.opt.UseSharedDate && info.SharedWithMeTime != "" {
+		modifiedDate = info.SharedWithMeTime
 	}
 	size := info.Size
 	if f.opt.SizeAsQuota {
@@ -1463,6 +1480,14 @@ func (f *Fs) List(ctx context.Context, dir string) (entries fs.DirEntries, err e
 	if iErr != nil {
 		return nil, iErr
 	}
+	// If listing the root of a teamdrive and got no entries,
+	// double check we have access
+	if f.isTeamDrive && len(entries) == 0 && f.root == "" && dir == "" {
+		err = f.teamDriveOK(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return entries, nil
 }
 
@@ -1600,6 +1625,7 @@ func (f *Fs) ListR(ctx context.Context, dir string, callback fs.ListRCallback) (
 	out := make(chan error, fs.Config.Checkers)
 	list := walk.NewListRHelper(callback)
 	overflow := []listREntry{}
+	listed := 0
 
 	cb := func(entry fs.DirEntry) error {
 		mu.Lock()
@@ -1612,6 +1638,7 @@ func (f *Fs) ListR(ctx context.Context, dir string, callback fs.ListRCallback) (
 				overflow = append(overflow, listREntry{d.ID(), d.Remote()})
 			}
 		}
+		listed++
 		return list.Add(entry)
 	}
 
@@ -1668,7 +1695,21 @@ func (f *Fs) ListR(ctx context.Context, dir string, callback fs.ListRCallback) (
 		return err
 	}
 
-	return list.Flush()
+	err = list.Flush()
+	if err != nil {
+		return err
+	}
+
+	// If listing the root of a teamdrive and got no entries,
+	// double check we have access
+	if f.isTeamDrive && listed == 0 && f.root == "" && dir == "" {
+		err = f.teamDriveOK(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // itemToDirEntry converts a drive.File to a fs.DirEntry.
@@ -2041,9 +2082,30 @@ func (f *Fs) CleanUp(ctx context.Context) error {
 	return nil
 }
 
+// teamDriveOK checks to see if we can access the team drive
+func (f *Fs) teamDriveOK(ctx context.Context) (err error) {
+	if !f.isTeamDrive {
+		return nil
+	}
+	var td *drive.Drive
+	err = f.pacer.Call(func() (bool, error) {
+		td, err = f.svc.Drives.Get(f.opt.TeamDriveID).Fields("name,id,capabilities,createdTime,restrictions").Context(ctx).Do()
+		return shouldRetry(err)
+	})
+	if err != nil {
+		return errors.Wrap(err, "failed to get Team/Shared Drive info")
+	}
+	fs.Debugf(f, "read info from team drive %q", td.Name)
+	return err
+}
+
 // About gets quota information
 func (f *Fs) About(ctx context.Context) (*fs.Usage, error) {
 	if f.isTeamDrive {
+		err := f.teamDriveOK(ctx)
+		if err != nil {
+			return nil, err
+		}
 		// Teamdrives don't appear to have a usage API so just return empty
 		return &fs.Usage{}, nil
 	}
