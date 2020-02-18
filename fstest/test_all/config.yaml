@@ -263,3 +263,6 @@ backends:
    remote:   "TestMailru:"
    subdir:   false
    fastlist: false
+ - backend:  "storj"
+   remote:   "TestStorj:"
+   fastlist: true
