@@ -1,22 +1,32 @@
 FROM golang AS builder
 
-COPY . /go/src/github.com/rclone/rclone/
 WORKDIR /go/src/github.com/rclone/rclone/
+COPY backend ./backend
+COPY bin ./bin
+COPY cmd ./cmd
+COPY fs ./fs
+COPY lib ./lib
+COPY vfs ./vfs
+COPY vendor ./vendor
+COPY rclone.go go.* Makefile VERSION ./
+COPY .git ./.git
+RUN ls -l /go/src/github.com/rclone/rclone/
 
-RUN make quicktest
-RUN \
-  CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-  make
+#RUN make quicktest 2>/dev/null && echo TESTS OK
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 make rclone
 RUN ./rclone version
 
 # Begin final image
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates fuse
+ENV STORJ_SCOPE=$STORJ_SCOPE
+RUN apk --no-cache add ca-certificates fuse bash
 
-COPY --from=builder /go/src/github.com/rclone/rclone/rclone /usr/local/bin/
-
-ENTRYPOINT [ "rclone" ]
+COPY --from=builder /go/bin/rclone /usr/local/bin/
+COPY ./contrib/docker/entrypoint.sh /entrypoint.sh
 
 WORKDIR /data
 ENV XDG_CONFIG_HOME=/config
+EXPOSE 5572
+ENTRYPOINT [ "/entrypoint.sh" ]
+
