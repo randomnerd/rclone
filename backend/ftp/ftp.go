@@ -190,7 +190,11 @@ func (f *Fs) getFtpConnection() (c *ftp.ServerConn, err error) {
 	if c != nil {
 		return c, nil
 	}
-	return f.ftpConnection()
+	c, err = f.ftpConnection()
+	if err != nil && f.opt.Concurrency > 0 {
+		f.tokens.Put()
+	}
+	return c, err
 }
 
 // Return an FTP connection to the pool
@@ -203,7 +207,13 @@ func (f *Fs) putFtpConnection(pc **ftp.ServerConn, err error) {
 	if f.opt.Concurrency > 0 {
 		defer f.tokens.Put()
 	}
+	if pc == nil {
+		return
+	}
 	c := *pc
+	if c == nil {
+		return
+	}
 	*pc = nil
 	if err != nil {
 		// If not a regular FTP error code then check the connection
@@ -778,19 +788,23 @@ func (f *ftpReadCloser) Close() error {
 	case <-timer.C:
 		// if timer fired assume no error but connection dead
 		fs.Errorf(f.f, "Timeout when waiting for connection Close")
+		f.f.putFtpConnection(nil, nil)
 		return nil
 	}
 	// if errors while reading or closing, dump the connection
 	if err != nil || f.err != nil {
 		_ = f.c.Quit()
+		f.f.putFtpConnection(nil, nil)
 	} else {
 		f.f.putFtpConnection(&f.c, nil)
 	}
 	// mask the error if it was caused by a premature close
+	// NB StatusAboutToSend is to work around a bug in pureftpd
+	// See: https://github.com/rclone/rclone/issues/3445#issuecomment-521654257
 	switch errX := err.(type) {
 	case *textproto.Error:
 		switch errX.Code {
-		case ftp.StatusTransfertAborted, ftp.StatusFileUnavailable:
+		case ftp.StatusTransfertAborted, ftp.StatusFileUnavailable, ftp.StatusAboutToSend:
 			err = nil
 		}
 	}
@@ -857,6 +871,7 @@ func (o *Object) Update(ctx context.Context, in io.Reader, src fs.ObjectInfo, op
 	if err != nil {
 		_ = c.Quit() // toss this connection to avoid sync errors
 		remove()
+		o.fs.putFtpConnection(nil, err)
 		return errors.Wrap(err, "update stor")
 	}
 	o.fs.putFtpConnection(&c, nil)
