@@ -1,0 +1,15 @@
+Dockerfile
+*~
+_junk/
+rclone
+build
+docs
+*.html
+*.md
+*.txt
+rclone.iml
+.idea
+.history
+*.test
+*.log
+*.iml
